@@ -25,3 +25,7 @@
       });
 }
 ```
+
+0. Install [nix](https://nixos.org/) and ensure [flakes](https://nixos.wiki/wiki/Flakes) are enabled
+1. Run `nix develop`
+2. `ddn` is now available in your shell
