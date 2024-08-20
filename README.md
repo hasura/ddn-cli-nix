@@ -7,8 +7,7 @@
   inputs = {
      nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
      flake-utils.url = "github:numtide/flake-utils";
-     ddnPkg.url = "github:TheInnerLight/hasura-ddn-cli-nix";
-     
+     ddnPkg.url = "github:hasura/ddn-cli-nix";
   };
 
   outputs = { self, nixpkgs, flake-utils, ddnPkg }:
