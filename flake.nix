@@ -10,36 +10,45 @@
     flake-utils.lib.eachSystem [ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" ] (system:
       let pkgs = nixpkgs.legacyPackages.${system};
           lib =  nixpkgs.lib;
-          ver = "v2.0.0";
+
+          # If you change this version you will have to update all of the hashes below.
+          # You can get each hash by running:
+          #
+          #     $ nix store prefetch-file <url>
+          #
+          # Make sure to preserve the "sha256-" prefix when pasting here.
+          ver = "v2.0.1";
+          url = arch: "https://graphql-engine-cdn.hasura.io/ddn/cli/v4/${ver}/cli-ddn-${arch}";
+
           sysSpec = 
               if system == "x86_64-linux" then rec
                 { 
                   arch = "linux-amd64";
                   src = pkgs.fetchurl {
-                    url = "https://graphql-engine-cdn.hasura.io/ddn/cli/v3.1/${ver}/cli-ddn-${arch}";
-                    sha256 = "sha256-Qylj1bqFHTfvscv740R82tYe6y4t562VUs/+pofFDT8=";
+                    url = url arch;
+                    sha256 = "sha256-wnkF5F8X697KgH/ALaRGKSEth0ldN094HvkydOPBc9E=";
                   };
                 }
               else if system == "x86_64-darwin" then rec
                 { 
                   arch = "darwin-amd64";
                   src = pkgs.fetchurl {
-                    url = "https://graphql-engine-cdn.hasura.io/ddn/cli/v3.1/${ver}/cli-ddn-${arch}";
-                    sha256 = "sha256-f+ryrtpEsrsebhA389/CLIQTjFzyXWQkL2E2hCcs9yM=";
+                    url = url arch;
+                    sha256 = "sha256-1/QyYdqBDFvbuHyDbQ5pq6YEr0CouNc2J41xnu9/XVA=";
                   };
                 }
               else if system == "aarch64-darwin" then rec
                 { 
                   arch = "darwin-arm64";
                   src = pkgs.fetchurl {
-                    url = "https://graphql-engine-cdn.hasura.io/ddn/cli/v3.1/${ver}/cli-ddn-${arch}";
-                    sha256 = "sha256-M7+yvNYfUUK9IaZODykaKAaAZ6O6BCKySxyMfpIMJZk=";
+                    url = url arch;
+                    sha256 = "sha256-sw7X+vO9oYnDObvv0Ol5Eo2Fz9rLwax9iOnRWCz4Td4=";
                   };
                 }
               else builtins.throw "Unsupported system";
       in
         { 
-          defaultPackage = pkgs.stdenv.mkDerivation rec {
+          packages.default = pkgs.stdenv.mkDerivation rec {
             name = "ddn";
 
             version = ver;
@@ -65,5 +74,10 @@
               platforms = platforms.all;
             };
           };
-        });
+        }) // {
+
+      overlays.default = final: prev: {
+        ddn = self.packages.${final.system}.default;
+      };
+    };
 }
