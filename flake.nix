@@ -17,7 +17,7 @@
           #     $ nix store prefetch-file <url>
           #
           # Make sure to preserve the "sha256-" prefix when pasting here.
-          ver = "v2.0.1";
+          ver = "v2.8.1";
           url = arch: "https://graphql-engine-cdn.hasura.io/ddn/cli/v4/${ver}/cli-ddn-${arch}";
 
           sysSpec = 
@@ -26,7 +26,7 @@
                   arch = "linux-amd64";
                   src = pkgs.fetchurl {
                     url = url arch;
-                    sha256 = "sha256-wnkF5F8X697KgH/ALaRGKSEth0ldN094HvkydOPBc9E=";
+                    sha256 = "sha256-ScXzo/pC/x28Bi4NYfuwDyoSK7adhvIyvm9f/+LOeBo=";
                   };
                 }
               else if system == "x86_64-darwin" then rec
@@ -34,7 +34,7 @@
                   arch = "darwin-amd64";
                   src = pkgs.fetchurl {
                     url = url arch;
-                    sha256 = "sha256-1/QyYdqBDFvbuHyDbQ5pq6YEr0CouNc2J41xnu9/XVA=";
+                    sha256 = "sha256-8NLyiL+i3gt8XWriMoVWmz9IzUEsuMQ3xuVCxW5J9xQ=";
                   };
                 }
               else if system == "aarch64-darwin" then rec
@@ -42,7 +42,7 @@
                   arch = "darwin-arm64";
                   src = pkgs.fetchurl {
                     url = url arch;
-                    sha256 = "sha256-sw7X+vO9oYnDObvv0Ol5Eo2Fz9rLwax9iOnRWCz4Td4=";
+                    sha256 = "sha256-8bM3HRNr71DZgoEjYPDUAGD1QhRNpPohKzjQw4b4Mmw=";
                   };
                 }
               else builtins.throw "Unsupported system";

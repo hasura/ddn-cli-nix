@@ -13,10 +13,9 @@
   outputs = { self, nixpkgs, flake-utils, ddnPkg }:
     flake-utils.lib.eachSystem [ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" ] (system:
       let pkgs = nixpkgs.legacyPackages.${system};
-          ddn = ddnPkg.defaultPackage.${system};
-          lib =  nixpkgs.lib;
+          ddn = ddnPkg.packages.${system}.default;
       in {
-        devShell = pkgs.mkShell rec {
+        devShell = pkgs.mkShell {
           buildInputs = [
             ddn
           ];
