@@ -37,6 +37,11 @@
             };
           };
 
+          checks = {
+            default = pkgs.callPackage ./packages/check.nix {
+              ddn = self.packages.${system}.ddn;
+            };
+          };
         }) // {
 
       overlays.default = final: prev: {
