@@ -34,11 +34,10 @@ jobs:
         
       # And then we commit the changes
 
-      # - name: Set up Git Config
-      #   run: |
-      #     # Configure author metadata to look like commits are made by Dependabot
-      #     git config user.name "${GITHUB_ACTOR}"
-      #     git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+      - name: Set up Git Config
+        run: |
+          git config user.name "automatic-updater"
+          git config user.email "automatic-updater@users.noreply.github.com"
 
       - name: Commit changes
         env:
