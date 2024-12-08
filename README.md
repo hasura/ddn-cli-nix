@@ -52,9 +52,8 @@ packages to the latest CLI version run the update script:
 $ nix run .#update
 ```
 
-This requires read access to the CLI source repository to get a list of tags. It
-is also possible to update without repository access by specifying a specific
-version:
+Or to create packaging for a specific version provide the version string as an
+argument:
 
 ```
 $ nix run .#update v2.15.0
