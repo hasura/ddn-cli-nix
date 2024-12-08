@@ -6,6 +6,7 @@ name: Check for updates
 on:
   schedule:
     - cron: '15 0 * * *'
+  pull_request:
 
 jobs:
   check_for_updates:
