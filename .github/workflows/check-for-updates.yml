@@ -6,7 +6,6 @@ name: Check for updates
 on:
   schedule:
     - cron: '15 0 * * *'
-  pull_request:
 
 jobs:
   check_for_updates:
@@ -17,8 +16,6 @@ jobs:
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v4.2.2
-        with:
-          ref: hallettj/automate-updates
 
       - name: Install Nix ❄
         uses: DeterminateSystems/nix-installer-action@v4
@@ -47,7 +44,7 @@ jobs:
           # Skip committing or pushing if there are no changes
           if [[ $(git status -s) ]]; then
             branch="$(git branch --show-current)"
-            tag="test-$VERSION"
+            tag="$VERSION"
             git commit -m "update to $VERSION"
             git tag "$tag"
             git push --atomic origin "$branch" "$tag"
