@@ -46,10 +46,12 @@ jobs:
           git add .
           # Skip committing or pushing if there are no changes
           if [[ $(git status -s) ]]; then
+            branch="$(git branch --show-current)"
+            tag="test-$VERSION"
             git commit -m "update to $VERSION"
-            git tag "test-$VERSION"
-            git push --follow-tags
-            echo "Created an update commit, and created tag, test-$VERSION"
+            git tag "$tag"
+            git push --atomic origin "$branch" "$tag"
+            echo "Created an update commit, and created tag, $tag"
           else
             echo "No new CLI release today"
           fi
