@@ -48,7 +48,7 @@ jobs:
           if [[ $(git status -s) ]]; then
             git commit -m "update to $VERSION"
             git tag "test-$VERSION"
-            git push --tags
+            git push --follow-tags
             echo "Created an update commit, and created tag, test-$VERSION"
           else
             echo "No new CLI release today"
