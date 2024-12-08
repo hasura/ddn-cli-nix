@@ -1,0 +1,54 @@
+# Checks for new CLI releases. If one is found updates the package in this repo
+# to pont to the latest version, creates a new commit, and tags it with the CLI
+# version.
+name: Check for updates
+
+on:
+  schedule:
+    - cron: '15 0 * * *'
+
+jobs:
+  check_for_updates:
+    name: Check for updates
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4.2.2
+
+      - name: Install Nix ❄
+        uses: DeterminateSystems/nix-installer-action@v4
+
+      - name: Update to latest CLI version
+        id: update
+        run: |
+          new_version=$(nix run .#update)
+          echo "VERSION=$new_version" >> $GITHUB_OUTPUT
+
+      - name: run checks 🔨
+        run: nix flake check
+        
+      # And then we commit the changes
+
+      - name: Set up Git Config
+        run: |
+          git config user.name "automatic-updater"
+          git config user.email "automatic-updater@users.noreply.github.com"
+
+      - name: Commit changes
+        env:
+          VERSION: ${{ steps.update.outputs.VERSION }}
+        run: |
+          git add .
+          # Skip committing or pushing if there are no changes
+          if [[ $(git status -s) ]]; then
+            branch="$(git branch --show-current)"
+            tag="$VERSION"
+            git commit -m "update to $VERSION"
+            git tag "$tag"
+            git push --atomic origin "$branch" "$tag"
+            echo "Created an update commit, and created tag, $tag"
+          else
+            echo "No new CLI release today"
+          fi

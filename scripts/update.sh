@@ -1,15 +1,11 @@
 # Automatically updates ddn.nix to build the given version of the CLI. Run with
 # an argument to specify a specific version, e.g. v2.15.0. Or run without
-# arguments to automatically select the latest version (requires read access to
-# the CLI repo).
+# arguments to automatically select the latest version.
 #
 # Run this script through its nix package:
 #
 #     $ nix run .#update
 #
-# Assumes that these environment variables are set:
-#
-# - BINARY_URL_PATTERN
 
 if [ $# -eq 0 ]; then
   VERSION=""
@@ -17,18 +13,10 @@ else
   VERSION="$1"
 fi
 
-REPO_URL="${REPO_URL:="git@github.com:hasura/v3-cli-go.git"}";
 PACKAGE_EXPRESSION="${PACKAGE_EXPRESSION:="packages/ddn.nix"}";
 
-function list-tags() {
-  list-git-tags --url="$REPO_URL" \
-    | grep -E "^v[0-9.]+$" # excludes pre-releases
-}
-
 function latest-tag() {
-  list-tags \
-    | sort --version-sort --reverse \
-    | head --lines=1
+  curl "https://graphql-engine-cdn.hasura.io/ddn/cli/v4/latest.json" | jq -r .latest
 }
 
 function fetch-hash() {

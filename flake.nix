@@ -25,8 +25,8 @@
             update = pkgs.writeShellApplication {
               name = "update";
               runtimeInputs = with pkgs; [
-                common-updater-scripts # provides list-git-tags
                 coreutils
+                curl
                 gnugrep
                 jq
               ];
@@ -37,6 +37,11 @@
             };
           };
 
+          checks = {
+            default = pkgs.callPackage ./packages/check.nix {
+              ddn = self.packages.${system}.ddn;
+            };
+          };
         }) // {
 
       overlays.default = final: prev: {
