@@ -5,7 +5,7 @@
 , binary-url-pattern
 }:
 let
-  version = "v3.4.0";
+  version = "v3.5.0";
   src-url = version: system: builtins.replaceStrings
     [ "VERSION" "PLATFORM-ARCH" ]
     [ version (go-system system) ]
@@ -17,9 +17,9 @@ let
     "aarch64-darwin" = "darwin-arm64";
   }.${system};
   hash = system: {
-    "linux-amd64" = "sha256-dyTZoiHkFkv+x2iIs3A/j6Jqm94rnsEU5uHHRkiYqNM=";
-    "darwin-amd64" = "sha256-mpzPoXJNg6YhnFImYvN7CdDwaDETuDbDQfZKae5PkP8=";
-    "darwin-arm64" = "sha256-MZwsaBB7XVIWk0bmQSl0Yf6FkRxFZeJjLA36LdGK2ls=";
+    "linux-amd64" = "sha256-wZvl2747VZw0eybqHcpMLKLEU40/1WLn1VUXS1MCp9A=";
+    "darwin-amd64" = "sha256-3VcjQC8zHZ9nxh+wbj7R3M27uFm+WujtSNVmKxNiDAg=";
+    "darwin-arm64" = "sha256-xyVEOX0ZIiSBqfpv1uCb7cti54qCrtzWe25dJDwFV6g=";
   }.${system};
   src = system: fetchurl {
     url = src-url version system;
