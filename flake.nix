@@ -2,47 +2,48 @@
   description = "Hasura DDN CLI";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
-    flake-utils.url = "github:numtide/flake-utils";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
-    flake-utils.lib.eachSystem [ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" ]
-      (system:
-        let
-          pkgs = import nixpkgs {
-            inherit system;
-            config.allowUnfree = true;
-          };
+  outputs = { self, nixpkgs }:
+    let
+      systems = [
+        "x86_64-linux"
+        "x86_64-darwin"
+        "aarch64-darwin"
+      ];
+      mkPkgs = system: import nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
+      };
+      eachSystem = callback: nixpkgs.lib.genAttrs systems (system: callback (mkPkgs system));
+      binary-url-pattern = "https://graphql-engine-cdn.hasura.io/ddn/cli/v4/VERSION/cli-ddn-PLATFORM-ARCH";
+    in
+    {
+      packages = eachSystem (pkgs: rec {
+        default = ddn;
+        ddn = pkgs.callPackage ./packages/ddn.nix { inherit binary-url-pattern; };
 
-          binary-url-pattern = "https://graphql-engine-cdn.hasura.io/ddn/cli/v4/VERSION/cli-ddn-PLATFORM-ARCH";
-        in
-        {
-          packages = rec {
-            ddn = pkgs.callPackage ./packages/ddn.nix { inherit binary-url-pattern; };
-            default = ddn;
+        update = pkgs.writeShellApplication {
+          name = "update";
+          runtimeInputs = with pkgs; [
+            coreutils
+            curl
+            gnugrep
+            jq
+          ];
+          text = ''
+            BINARY_URL_PATTERN='${binary-url-pattern}'
+            ${builtins.readFile ./scripts/update.sh}
+          '';
+        };
+      });
 
-            update = pkgs.writeShellApplication {
-              name = "update";
-              runtimeInputs = with pkgs; [
-                coreutils
-                curl
-                gnugrep
-                jq
-              ];
-              text = ''
-                BINARY_URL_PATTERN='${binary-url-pattern}'
-                ${builtins.readFile ./scripts/update.sh}
-              '';
-            };
-          };
-
-          checks = {
-            default = pkgs.callPackage ./packages/check.nix {
-              ddn = self.packages.${system}.ddn;
-            };
-          };
-        }) // {
+      checks = eachSystem (pkgs: {
+        default = pkgs.callPackage ./packages/check.nix {
+          ddn = self.packages.${pkgs.system}.ddn;
+        };
+      });
 
       overlays.default = final: prev: {
         ddn = self.packages.${final.system}.default;
